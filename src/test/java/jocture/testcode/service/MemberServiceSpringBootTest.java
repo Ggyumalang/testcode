@@ -2,8 +2,10 @@ package jocture.testcode.service;
 
 import jocture.testcode.domain.Member;
 import jocture.testcode.exception.DuplicateEmailMemberException;
+import jocture.testcode.exception.NoExistsMemberException;
 import jocture.testcode.repository.MemberRepository;
 import org.assertj.core.api.ThrowableAssert;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -32,15 +34,19 @@ class MemberServiceSpringBootTest {
     //@Rollback
     void join() {
         //BDD 스타일 - Given/When/Then
-        //given
+        //given 사전에 준비되어야 하는 것들
         Member member = new Member("jjlim", "jjlim@ab.com");
 
         //when
         memberService.join(member);
 
-        //then
+        //then 정상적으로 작동하는 지 테스트하는 코드
         assertThat(member.getId()).isNotNull();
         assertThat(member.getId()).isPositive();
+
+        System.out.println("name >> " + member.getName());
+        System.out.println("id >> " + member.getId());
+        System.out.println("email >> " + member.getEmail());
 
         Optional<Member> result = memberRepository.findById(member.getId());
         assertThat(result).isPresent();
@@ -49,6 +55,7 @@ class MemberServiceSpringBootTest {
     }
 
     @Test
+    @DisplayName("Duplicate Email Check를 위한 테스트 케이스")
     void join_duplicateEmail() {
         //given
         Member member1 = new Member("jjlim", "jjlim@ab.com");
@@ -64,5 +71,26 @@ class MemberServiceSpringBootTest {
 
     @Test
     void getMember() {
+        //given
+        Member member = new Member("hgkim", "khg2154@naver.com");
+        memberRepository.save(member);
+
+        //when
+        Optional<Member> optionalMember = memberRepository.findById(member.getId());
+
+        //then
+        assertThat(optionalMember.get().getName()).isEqualTo(member.getName());
+        assertThat(optionalMember.get().getEmail()).isEqualTo(member.getEmail());
+    }
+
+    @Test
+    void getMember_noExists() {
+        //given
+        int noExistsMemberId = -99;
+        //when
+        ThrowableAssert.ThrowingCallable throwingCallable =
+                () -> memberService.getMember(noExistsMemberId);
+        //then
+        assertThatThrownBy(throwingCallable).isInstanceOf(NoExistsMemberException.class);
     }
 }
