@@ -1,3 +1,5 @@
+//굉장히 편하지만 모든 Bean들이 올라가야하므로 느리다.
+//스프링부트 테스트이자 통합테스트(API 테스트 , End-to-End (E2E) 테스트라고 부른다.
 package jocture.testcode.service;
 
 import jocture.testcode.domain.Member;

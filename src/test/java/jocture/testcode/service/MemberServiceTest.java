@@ -23,6 +23,8 @@ import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.anyInt;
 import static org.mockito.Mockito.never;
 
+//유닛테스트 -> 슬라이스 테스트 , Mockito , TestNG
+//슬라이스 테스트 -> (@WebMvcTest => Controller, @DataJpaTest => Repository , @JsonTest , @RestClientTest 등 어노테이션들)
 @ExtendWith(MockitoExtension.class)
 class MemberServiceTest {
 
